@@ -13,6 +13,7 @@ Scripts that keep an existing Photoshop CS6 (13.0.6) install running on modern m
 | --- | --- | --- |
 | Finder 拒絕啟動 | 原 bundle ID `com.adobe.Photoshop` 被系統阻擋 | `Apply-Compatibility.command` |
 | 3D 功能導致崩潰 | 3D 引擎外掛不相容；改名為 `~Photoshop3DEngine.plugin` 後 PS 會略過它 | `Apply-Compatibility.command` |
+| 從別台機器搬來後提示「元件遺失或損壞」 | 缺少原安裝機器上 `/Library/Application Support/Adobe` 底下的 `Adobe PCD`、`caps`、`PCF`、`SLCache`、`SLStore`、`ssc`、`OOBE`、`Adobe Photoshop CS6` | `Migrate-Support-Files.command` |
 | 缺少 Adobe Unit Types | 新系統上沒有這個 scripting addition | `Install-Unit-Types-Osax.command` |
 | **macOS 26：存檔（如 JPG）時崩潰** | `ATSFontIteratorReset` 在 macOS 26 上一呼叫就崩潰，CoolType 建字型清單時必定觸發 | `Install-macOS26-Fix.command` |
 | **macOS 26：每次啟動後首次存檔慢約 20 秒** | CoolType 用 `exchangedata()` 儲存字型快取，APFS 不支援，快取永遠是 0 位元組 | `Install-macOS26-Fix.command` |
@@ -24,8 +25,9 @@ macOS 26 的兩個問題的技術細節見 [docs/macos26-font-fix.md](docs/macos
 先退出 Photoshop，依序雙擊：
 
 1. `Apply-Compatibility.command`：更改 bundle ID，並停用 3D 引擎外掛。
-2. `Install-Unit-Types-Osax.command`：先從原本安裝 CS6 的電腦（或虛擬機）的 `/Library/ScriptingAdditions/` 複製 `Adobe Unit Types.osax`，放到本資料夾，再執行。執行時需要輸入管理員密碼。
-3. `Install-macOS26-Fix.command`（macOS 26 才需要）：需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
+2. `Migrate-Support-Files.command`（PS 是從別台機器或虛擬機搬過來時才需要）：把原機器的 `/Library/Application Support/Adobe` 資料夾拖進終端機，腳本會複製上表列出的目錄。已經存在的目錄會略過不動。需要管理員密碼。這些都是你自己安裝的登錄資料，本倉庫不提供。
+3. `Install-Unit-Types-Osax.command`：先從原本安裝 CS6 的電腦（或虛擬機）的 `/Library/ScriptingAdditions/` 複製 `Adobe Unit Types.osax`，放到本資料夾，再執行。執行時需要輸入管理員密碼。
+4. `Install-macOS26-Fix.command`（macOS 26 才需要）：需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
 
 `Launch-CS6-Offline.command` 用 `sandbox-exec` 在斷網狀態下啟動 PS，避免 CS6 連網時要求登入。
 
