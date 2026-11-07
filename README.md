@@ -20,13 +20,27 @@ Scripts that keep an existing Photoshop CS6 (13.0.6) install running on modern m
 
 macOS 26 的兩個問題的技術細節見 [docs/macos26-font-fix.md](docs/macos26-font-fix.md)。
 
-## 使用方式
+## 第一步：在 Mojave 虛擬機裡安裝
+
+CS6 的安裝程式在新版 macOS 上跑不動，所以我們的做法是：
+
+1. 建立一台 macOS Mojave 10.14 虛擬機（我們用 VMware Fusion），**安裝前先斷開虛擬網卡**。CS6 連網啟動時會要求登入帳號。
+2. 在虛擬機裡安裝 CS6（試用模式即可），開啟一次確認能用，再套用 Adobe 官方的 13.0.6 更新。
+3. 把下列項目從虛擬機複製到新 Mac 的同一個位置：
+   - `/Applications/Adobe Photoshop CS6/`（整個資料夾）
+   - `/Library/Application Support/Adobe/`，之後交給 `Migrate-Support-Files.command` 處理
+   - `/Library/ScriptingAdditions/Adobe Unit Types.osax`
+   - （選用）`~/Library/Preferences/Adobe Photoshop CS6 Settings/`
+
+Mojave 虛擬機需要 Intel Mac 當主機。Apple Silicon 無法用硬體虛擬化跑 Intel 版 macOS，可以借一台 Intel Mac 完成這一步，再把成品複製到 Apple Silicon 機器上。
+
+## 第二步：在新 Mac 上執行腳本
 
 先退出 Photoshop，依序雙擊：
 
 1. `Apply-Compatibility.command`：更改 bundle ID，並停用 3D 引擎外掛。
-2. `Migrate-Support-Files.command`（PS 是從別台機器或虛擬機搬過來時才需要）：把原機器的 `/Library/Application Support/Adobe` 資料夾拖進終端機，腳本會複製上表列出的目錄。已經存在的目錄會略過不動。需要管理員密碼。這些都是你自己安裝的登錄資料，本倉庫不提供。
-3. `Install-Unit-Types-Osax.command`：先從原本安裝 CS6 的電腦（或虛擬機）的 `/Library/ScriptingAdditions/` 複製 `Adobe Unit Types.osax`，放到本資料夾，再執行。執行時需要輸入管理員密碼。
+2. `Migrate-Support-Files.command`：把從虛擬機複製出來的 `Library/Application Support/Adobe` 資料夾拖進終端機，腳本會複製上表列出的目錄。已經存在的目錄會略過不動。需要管理員密碼。這些都是你自己安裝的登錄資料，本倉庫不提供。
+3. `Install-Unit-Types-Osax.command`：把從虛擬機複製出來的 `Adobe Unit Types.osax` 放到本資料夾，再執行。需要管理員密碼。
 4. `Install-macOS26-Fix.command`（macOS 26 才需要）：需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
 
 `Launch-CS6-Offline.command` 用 `sandbox-exec` 在斷網狀態下啟動 PS，避免 CS6 連網時要求登入。

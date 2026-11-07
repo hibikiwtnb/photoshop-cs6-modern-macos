@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copy "Adobe Unit Types.osax" into /Library/ScriptingAdditions.
-# The osax is Adobe software and is not included in this repository. Take it from
-# /Library/ScriptingAdditions on the Mac (or VM) where CS6 was originally installed,
+# The osax is Adobe software and is not included in this repository. Copy it out of
+# /Library/ScriptingAdditions in the Mojave VM where CS6 was installed (see README),
 # put it next to this script, then run the script. It asks for an admin password.
 set -euo pipefail
 PACKAGE_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -14,7 +14,7 @@ if [[ -d "$DEST" ]]; then
 fi
 [[ -d "$SRC" ]] || {
     echo 'Adobe Unit Types.osax was not found next to this script.'
-    echo 'Copy it from /Library/ScriptingAdditions on the original CS6 machine, then run again.'
+    echo 'Copy it from /Library/ScriptingAdditions in the Mojave VM, then run again.'
     exit 1
 }
 echo 'Copying to /Library/ScriptingAdditions (needs your admin password) ...'
