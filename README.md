@@ -13,6 +13,7 @@ Scripts that keep an existing Photoshop CS6 (13.0.6) install running on modern m
 | --- | --- | --- |
 | Finder 拒絕啟動 | 原 bundle ID `com.adobe.Photoshop` 被系統阻擋 | `Apply-Compatibility.command` |
 | 3D 功能導致崩潰 | 3D 引擎外掛不相容；改名為 `~Photoshop3DEngine.plugin` 後 PS 會略過它 | `Apply-Compatibility.command` |
+| 背景更新／遙測常駐 | AUM 更新器（AdobeUpdater）與 LogTransport 每次啟動都會被叫起，甚至會上傳遙測與崩潰回報 | `Disable-AutoUpdate.command` |
 | 從別台機器搬來後提示「元件遺失或損壞」 | 缺少原安裝機器上 `/Library/Application Support/Adobe` 底下的 `Adobe PCD`、`caps`、`PCF`、`SLCache`、`SLStore`、`ssc`、`OOBE`、`Adobe Photoshop CS6` | `Migrate-Support-Files.command` |
 | 缺少 Adobe Unit Types | 新系統上沒有這個 scripting addition | `Install-Unit-Types-Osax.command` |
 | **macOS 26：存檔（如 JPG）時崩潰** | `ATSFontIteratorReset` 在 macOS 26 上一呼叫就崩潰，CoolType 建字型清單時必定觸發 | `Install-macOS26-Fix.command` |
@@ -39,9 +40,10 @@ Mojave 虛擬機需要 Intel Mac 當主機。Apple Silicon 無法用硬體虛擬
 先退出 Photoshop，依序雙擊：
 
 1. `Apply-Compatibility.command`：更改 bundle ID，並停用 3D 引擎外掛。
-2. `Migrate-Support-Files.command`：把從虛擬機複製出來的 `Library/Application Support/Adobe` 資料夾拖進終端機，腳本會複製上表列出的目錄。已經存在的目錄會略過不動。需要管理員密碼。這些都是你自己安裝的登錄資料，本倉庫不提供。
-3. `Install-Unit-Types-Osax.command`：把從虛擬機複製出來的 `Adobe Unit Types.osax` 放到本資料夾，再執行。需要管理員密碼。
-4. `Install-macOS26-Fix.command`（macOS 26 才需要）：需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
+2. `Disable-AutoUpdate.command`：停止 AUM 更新檢查、遙測與崩潰回報（可逆，`Restore-AutoUpdate.command` 還原）。
+3. `Migrate-Support-Files.command`：把從虛擬機複製出來的 `Library/Application Support/Adobe` 資料夾拖進終端機，腳本會複製上表列出的目錄。已經存在的目錄會略過不動。需要管理員密碼。這些都是你自己安裝的登錄資料，本倉庫不提供。
+4. `Install-Unit-Types-Osax.command`：把從虛擬機複製出來的 `Adobe Unit Types.osax` 放到本資料夾，再執行。需要管理員密碼。
+5. `Install-macOS26-Fix.command`（macOS 26 才需要）：需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
 
 `Launch-CS6-Offline.command` 用 `sandbox-exec` 在斷網狀態下啟動 PS，避免 CS6 連網時要求登入。
 
@@ -50,6 +52,7 @@ Mojave 虛擬機需要 Intel Mac 當主機。Apple Silicon 無法用硬體虛擬
 ## 還原
 
 - `Restore-Metadata.command`：還原 `Info.plist`，並重新啟用 3D 引擎外掛。
+- `Restore-AutoUpdate.command`：把更新器、遙測與崩潰回報元件重新啟用。
 - `Uninstall-macOS26-Fix.command`：還原原版主程式，並移除補丁庫。
 
 原檔備份在本資料夾的 `backups/`（不會被提交到 git）。
@@ -58,6 +61,7 @@ Mojave 虛擬機需要 Intel Mac 當主機。Apple Silicon 無法用硬體虛擬
 
 - 實測環境：Intel Sequoia 15.4.1，以及 Apple Silicon（M2）macOS 26.5。開檔、裁切、存 JPG 與文字工具可用；列印、影片、Bridge 整合未完整測試。
 - 3D 功能已被停用。
+- 重裝或覆蓋 CS6 會把 `Disable-AutoUpdate.command` 停用的更新器與遙測元件裝回來，需再執行一次。
 - 本倉庫不處理授權或啟用問題。
 
 更早的相容性研究紀錄見 [docs/cs6-macos-compatibility.md](docs/cs6-macos-compatibility.md)。
