@@ -19,7 +19,9 @@ Scripts that keep an existing Photoshop CS6 (13.0.6) install running on macOS 15
 | **掃描字型時崩潰，例如存 JPG** | CoolType 呼叫舊版 `ATSFontIteratorReset` 時可能崩潰。已在 Intel Sequoia 15.7.7 與 M2 macOS 26.5 觀察到 | `Install-macOS26-Fix.command` |
 | **每次啟動後首次存檔偏慢** | CoolType 使用 APFS 不支援的 `exchangedata()` 儲存字型快取，導致字型清單需要重建 | `Install-macOS26-Fix.command` |
 
-字型崩潰與快取問題的技術細節見 [docs/macos26-font-fix.md](docs/macos26-font-fix.md)。
+字型補丁的安裝門檻是 **macOS 15.0（Sequoia）以上**。ATS 崩潰最早出現的版本仍未知，目前有直接崩潰證據的是 Intel 15.7.7 與 M2 26.5（Rosetta）。
+
+字型快取修補則取決於快取所在的檔案系統。APFS 從 **macOS 10.13（High Sierra）** 起成為預設，因此快取問題理論上可早至 10.13 的 APFS 環境。兩項修補的原理見 [技術說明](docs/macos26-font-fix.md)。
 
 ## 第一步：在 Mojave 虛擬機裡安裝
 
