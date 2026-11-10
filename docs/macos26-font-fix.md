@@ -1,6 +1,6 @@
-# Font crash and slow first save on modern macOS
+# Font crash and slow first save on macOS 15 and later
 
-Install the ATS fix on every modern macOS version supported by this project, including Sequoia 15 and macOS 26, on Intel and Apple Silicon. The installer retains its original filename, `Install-macOS26-Fix.command`.
+Install the ATS fix on macOS 15 (Sequoia) and later, on Intel and Apple Silicon. The installer retains its original filename, `Install-macOS26-Fix.command`.
 
 ## Symptom
 

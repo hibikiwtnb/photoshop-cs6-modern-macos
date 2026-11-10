@@ -1,8 +1,8 @@
 # photoshop-cs6-modern-macos
 
-Scripts that keep an existing Photoshop CS6 (13.0.6) install running on modern macOS: Sequoia 15 and macOS 26, on Intel and on Apple Silicon (through Rosetta).
+Scripts that keep an existing Photoshop CS6 (13.0.6) install running on macOS 15 (Sequoia) and later, on Intel and on Apple Silicon (through Rosetta).
 
-讓已安裝的 Photoshop CS6（13.0.6）在新版 macOS（Sequoia 15、macOS 26，Intel 與 Apple Silicon／Rosetta）上繼續使用的腳本集。
+讓已安裝的 Photoshop CS6（13.0.6）在 macOS 15（Sequoia）以上（Intel 與 Apple Silicon／Rosetta）上繼續使用的腳本集。
 
 > This repository contains no Adobe software, serial numbers or license files. You need your own legally obtained, fully installed CS6.
 > 本倉庫不含任何 Adobe 程式、序號或授權檔案，請自備合法取得並已完整安裝的 CS6。
@@ -16,8 +16,8 @@ Scripts that keep an existing Photoshop CS6 (13.0.6) install running on modern m
 | 背景更新／遙測常駐 | AUM 更新器（AdobeUpdater）與 LogTransport 每次啟動都會被叫起，甚至會上傳遙測與崩潰回報 | `Disable-AutoUpdate.command` |
 | 從別台機器搬來後提示「元件遺失或損壞」 | 缺少原安裝機器上 `/Library/Application Support/Adobe` 底下的 `Adobe PCD`、`caps`、`PCF`、`SLCache`、`SLStore`、`ssc`、`OOBE`、`Adobe Photoshop CS6` | `Migrate-Support-Files.command` |
 | 缺少 Adobe Unit Types | 新系統上沒有這個 scripting addition | `Install-Unit-Types-Osax.command` |
-| **現代 macOS：掃描字型時崩潰，例如存 JPG** | CoolType 呼叫舊版 `ATSFontIteratorReset` 時可能崩潰。已在 Intel Sequoia 15.7.7 與 M2 macOS 26.5 觀察到 | `Install-macOS26-Fix.command` |
-| **現代 macOS：每次啟動後首次存檔偏慢** | CoolType 使用 APFS 不支援的 `exchangedata()` 儲存字型快取，導致字型清單需要重建 | `Install-macOS26-Fix.command` |
+| **掃描字型時崩潰，例如存 JPG** | CoolType 呼叫舊版 `ATSFontIteratorReset` 時可能崩潰。已在 Intel Sequoia 15.7.7 與 M2 macOS 26.5 觀察到 | `Install-macOS26-Fix.command` |
+| **每次啟動後首次存檔偏慢** | CoolType 使用 APFS 不支援的 `exchangedata()` 儲存字型快取，導致字型清單需要重建 | `Install-macOS26-Fix.command` |
 
 字型崩潰與快取問題的技術細節見 [docs/macos26-font-fix.md](docs/macos26-font-fix.md)。
 
@@ -43,7 +43,7 @@ Mojave 虛擬機需要 Intel Mac 當主機。Apple Silicon 無法用硬體虛擬
 2. `Disable-AutoUpdate.command`：停止 AUM 更新檢查、遙測與崩潰回報（可逆，`Restore-AutoUpdate.command` 還原）。
 3. `Migrate-Support-Files.command`：把從虛擬機複製出來的 `Library/Application Support/Adobe` 資料夾拖進終端機，腳本會複製上表列出的目錄。已經存在的目錄會略過不動。需要管理員密碼。這些都是你自己安裝的登錄資料，本倉庫不提供。
 4. `Install-Unit-Types-Osax.command`：把從虛擬機複製出來的 `Adobe Unit Types.osax` 放到本資料夾，再執行。需要管理員密碼。
-5. `Install-macOS26-Fix.command`：在本專案支援的現代 macOS 上一律套用，包括 Sequoia 15 與 macOS 26、Intel 與 Apple Silicon。腳本保留原檔名，需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
+5. `Install-macOS26-Fix.command`：在 macOS 15（Sequoia）以上一律套用，適用於 Intel 與 Apple Silicon。腳本保留原檔名，需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
 
 `Launch-CS6-Offline.command` 用 `sandbox-exec` 在斷網狀態下啟動 PS，避免 CS6 連網時要求登入。
 
