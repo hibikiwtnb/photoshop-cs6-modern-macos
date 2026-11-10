@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fix Photoshop CS6 font crashes and slow first save on macOS 15 and later.
+# Fix Photoshop CS6 ATS font crashes and slow first save.
 # Builds fix/atsfix.c into libATSFix.dylib, copies it into the app and adds a weak
 # load command to the main executable. Re-running it only refreshes the dylib.
 set -euo pipefail

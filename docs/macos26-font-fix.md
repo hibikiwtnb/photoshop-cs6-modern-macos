@@ -1,6 +1,6 @@
-# Font crash and slow first save on macOS 15 and later
+# Photoshop CS6 font crash and slow first save
 
-Install the ATS fix on macOS 15.0 (Sequoia) and later, on Intel and Apple Silicon. The installer retains its original filename, `Install-macOS26-Fix.command`.
+The ATS fix was tested on Intel macOS 15.7.7 and on macOS 26.5 with Rosetta on an M2. The installer retains its original filename, `Install-macOS26-Fix.command`.
 
 ## Symptom
 
@@ -10,7 +10,7 @@ Photoshop CS6 can crash with `EXC_BAD_ACCESS` in `ATSLightFontIteratorReset`, ca
 
 On the tested Rosetta system, `ATSFontIteratorCreate` and `ATSFontIteratorNext` still enumerate fonts while `ATSFontIteratorReset` segfaults. The Intel Sequoia crash report also places the fault inside the reset call.
 
-The earliest macOS release with this crash is unknown. The earliest version with direct crash evidence in this project is Intel macOS 15.7.7. Version 15.0 is the project's installation threshold.
+The earliest macOS release affected by this crash and the oldest release on which the patch works are both unknown.
 
 Fix: interpose `ATSFontIteratorReset` with release-then-create:
 

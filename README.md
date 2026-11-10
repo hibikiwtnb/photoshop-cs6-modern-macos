@@ -1,8 +1,8 @@
 # photoshop-cs6-modern-macos
 
-Scripts that keep an existing Photoshop CS6 (13.0.6) install running on macOS 15 (Sequoia) and later, on Intel and on Apple Silicon (through Rosetta).
+Compatibility scripts for existing Photoshop CS6 (13.0.6) installations, tested on Intel macOS Sequoia and on macOS 26.5 with Rosetta on an M2.
 
-讓已安裝的 Photoshop CS6（13.0.6）在 macOS 15（Sequoia）以上（Intel 與 Apple Silicon／Rosetta）上繼續使用的腳本集。
+適用於已安裝的 Photoshop CS6（13.0.6）的相容性腳本，實測環境為 Intel macOS Sequoia 與 M2 macOS 26.5（Rosetta）。
 
 > This repository contains no Adobe software, serial numbers or license files. You need your own legally obtained, fully installed CS6.
 > 本倉庫不含任何 Adobe 程式、序號或授權檔案，請自備合法取得並已完整安裝的 CS6。
@@ -19,7 +19,7 @@ Scripts that keep an existing Photoshop CS6 (13.0.6) install running on macOS 15
 | **掃描字型時崩潰，例如存 JPG** | CoolType 呼叫舊版 `ATSFontIteratorReset` 時可能崩潰。已在 Intel Sequoia 15.7.7 與 M2 macOS 26.5 觀察到 | `Install-macOS26-Fix.command` |
 | **每次啟動後首次存檔偏慢** | CoolType 使用 APFS 不支援的 `exchangedata()` 儲存字型快取，導致字型清單需要重建 | `Install-macOS26-Fix.command` |
 
-字型補丁的安裝門檻是 **macOS 15.0（Sequoia）以上**。ATS 崩潰最早出現的版本仍未知，目前有直接崩潰證據的是 Intel 15.7.7 與 M2 26.5（Rosetta）。
+**字型補丁的實測環境**為 Intel macOS 15.7.7 與 M2 macOS 26.5（Rosetta）。兩者均觀察到相同的 ATS 崩潰堆疊。崩潰最早出現的版本及補丁可運作的最低版本都仍未知。
 
 字型快取修補則取決於快取所在的檔案系統。APFS 從 **macOS 10.13（High Sierra）** 起成為預設，因此快取問題理論上可早至 10.13 的 APFS 環境。兩項修補的原理見 [技術說明](docs/macos26-font-fix.md)。
 
@@ -45,7 +45,7 @@ Mojave 虛擬機需要 Intel Mac 當主機。Apple Silicon 無法用硬體虛擬
 2. `Disable-AutoUpdate.command`：停止 AUM 更新檢查、遙測與崩潰回報（可逆，`Restore-AutoUpdate.command` 還原）。
 3. `Migrate-Support-Files.command`：把從虛擬機複製出來的 `Library/Application Support/Adobe` 資料夾拖進終端機，腳本會複製上表列出的目錄。已經存在的目錄會略過不動。需要管理員密碼。這些都是你自己安裝的登錄資料，本倉庫不提供。
 4. `Install-Unit-Types-Osax.command`：把從虛擬機複製出來的 `Adobe Unit Types.osax` 放到本資料夾，再執行。需要管理員密碼。
-5. `Install-macOS26-Fix.command`：在 macOS 15（Sequoia）以上一律套用，適用於 Intel 與 Apple Silicon。腳本保留原檔名，需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
+5. `Install-macOS26-Fix.command`：修補 ATS 字型崩潰與 APFS 字型快取問題。腳本保留原檔名，需要 Xcode Command Line Tools（`xcode-select --install`），會在本機編譯 `fix/atsfix.c`。
 
 `Launch-CS6-Offline.command` 用 `sandbox-exec` 在斷網狀態下啟動 PS，避免 CS6 連網時要求登入。
 
