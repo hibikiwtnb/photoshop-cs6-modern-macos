@@ -1,12 +1,14 @@
-# macOS 26 font crash and slow first save
+# Font crash and slow first save on modern macOS
+
+Install the ATS fix on every modern macOS version supported by this project, including Sequoia 15 and macOS 26, on Intel and Apple Silicon. The installer retains its original filename, `Install-macOS26-Fix.command`.
 
 ## Symptom
 
-On macOS 26, Photoshop CS6 crashes with `EXC_BAD_ACCESS` in `ATSLightFontIteratorReset` (called from `AdobeCoolType`), often when saving a file. This happens even with documents that have no text layers, because CoolType builds its font list lazily, the first time anything needs it.
+Photoshop CS6 can crash with `EXC_BAD_ACCESS` in `ATSLightFontIteratorReset`, called by `AdobeCoolType` through `ATSFontIteratorReset`. The same stack was observed on Intel Sequoia 15.7.7 and on macOS 26.5 with Rosetta on an M2. Saving a file can trigger it even without text layers because CoolType builds its font list on demand.
 
 ## Cause 1: `ATSFontIteratorReset` crashes
 
-In the x86_64 ATS framework that runs under Rosetta, `ATSFontIteratorCreate` and `ATSFontIteratorNext` still work (they list all ~3000 system fonts), but `ATSFontIteratorReset` segfaults every time. Clearing font caches or removing user fonts does not help.
+On the tested Rosetta system, `ATSFontIteratorCreate` and `ATSFontIteratorNext` still enumerate fonts while `ATSFontIteratorReset` segfaults. The Intel Sequoia crash report also places the fault inside the reset call.
 
 Fix: interpose `ATSFontIteratorReset` with release-then-create:
 

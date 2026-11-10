@@ -1,4 +1,4 @@
-// Photoshop CS6 fixes for macOS 26 (x86_64 under Rosetta), loaded via LC_LOAD_WEAK_DYLIB.
+// Photoshop CS6 fixes for modern macOS (x86_64 on Intel or Rosetta), loaded via LC_LOAD_WEAK_DYLIB.
 //
 // 1. ATSFontIteratorReset crashes. Replace it with Release + Create, which still work.
 // 2. PBExchangeObjectsSync uses exchangedata(2), which APFS does not support, so
