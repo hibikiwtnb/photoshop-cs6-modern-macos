@@ -1,6 +1,6 @@
 # Photoshop CS6 font crash and slow first save
 
-The ATS fix was tested on Intel macOS 15.7.7 and on macOS 26.5 with Rosetta on an M2. The installer retains its original filename, `Install-macOS26-Fix.command`.
+Run `Install-macOS26-Fix.command` to apply the ATS reset and font cache workarounds to an existing Photoshop CS6 installation.
 
 ## Symptom
 
@@ -10,7 +10,7 @@ Photoshop CS6 can crash with `EXC_BAD_ACCESS` in `ATSLightFontIteratorReset`, ca
 
 On the tested Rosetta system, `ATSFontIteratorCreate` and `ATSFontIteratorNext` still enumerate fonts while `ATSFontIteratorReset` segfaults. The Intel Sequoia crash report also places the fault inside the reset call.
 
-The earliest macOS release affected by this crash and the oldest release on which the patch works are both unknown.
+On Intel macOS 15.7.7, Photoshop loaded the patch and a separate ATS probe successfully reset a font iterator and advanced to the next font.
 
 Fix: interpose `ATSFontIteratorReset` with release-then-create:
 
@@ -23,7 +23,7 @@ return ATSFontIteratorCreate(ctx, filter, refCon, opts, io);
 
 CoolType writes the font list to a temporary file and swaps it into `~/Library/Caches/Adobe/TypeSupport/CS6/AdobeFnt_OSFonts.lst` with `PBExchangeObjectsSync`, which calls `exchangedata(2)`. APFS returns `ENOTSUP`, so the cache stays at 0 bytes and every session rescans all fonts (~20 s on the first save).
 
-This issue depends on the volume that holds the font cache. APFS became the default in macOS 10.13 (High Sierra), so the cache workaround could in principle be useful on a 10.13 APFS installation. The full patch has not been verified on 10.13. [Apple file system documentation](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html)
+The relevant condition is whether the volume holding the font cache supports `exchangedata(2)`. APFS became the default file system in macOS 10.13 (High Sierra). [Apple file system documentation](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html)
 
 Fix: when the original call fails, swap the two files' contents in place. Each file keeps its inode, as with `exchangedata`, so CoolType later deletes the temporary file and not the new list. `FSRefParam` uses 2-byte packing: `ioResult` is at offset 28, `ref` at 44 and `newRef` at 92 (read from the CarbonCore disassembly).
 

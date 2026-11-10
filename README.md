@@ -1,8 +1,8 @@
 # photoshop-cs6-modern-macos
 
-Compatibility scripts for existing Photoshop CS6 (13.0.6) installations, tested on Intel macOS Sequoia and on macOS 26.5 with Rosetta on an M2.
+Compatibility fixes for launching, editing and saving with an existing Photoshop CS6 13.0.6 installation.
 
-適用於已安裝的 Photoshop CS6（13.0.6）的相容性腳本，實測環境為 Intel macOS Sequoia 與 M2 macOS 26.5（Rosetta）。
+為已安裝的 Photoshop CS6 13.0.6 提供相容性修補，處理啟動、編輯與存檔時遇到的問題。
 
 > This repository contains no Adobe software, serial numbers or license files. You need your own legally obtained, fully installed CS6.
 > 本倉庫不含任何 Adobe 程式、序號或授權檔案，請自備合法取得並已完整安裝的 CS6。
@@ -16,12 +16,10 @@ Compatibility scripts for existing Photoshop CS6 (13.0.6) installations, tested 
 | 背景更新／遙測常駐 | AUM 更新器（AdobeUpdater）與 LogTransport 每次啟動都會被叫起，甚至會上傳遙測與崩潰回報 | `Disable-AutoUpdate.command` |
 | 從別台機器搬來後提示「元件遺失或損壞」 | 缺少原安裝機器上 `/Library/Application Support/Adobe` 底下的 `Adobe PCD`、`caps`、`PCF`、`SLCache`、`SLStore`、`ssc`、`OOBE`、`Adobe Photoshop CS6` | `Migrate-Support-Files.command` |
 | 缺少 Adobe Unit Types | 新系統上沒有這個 scripting addition | `Install-Unit-Types-Osax.command` |
-| **掃描字型時崩潰，例如存 JPG** | CoolType 呼叫舊版 `ATSFontIteratorReset` 時可能崩潰。已在 Intel Sequoia 15.7.7 與 M2 macOS 26.5 觀察到 | `Install-macOS26-Fix.command` |
+| **掃描字型時崩潰，例如存 JPG** | CoolType 呼叫舊版 `ATSFontIteratorReset` 時可能崩潰 | `Install-macOS26-Fix.command` |
 | **每次啟動後首次存檔偏慢** | CoolType 使用 APFS 不支援的 `exchangedata()` 儲存字型快取，導致字型清單需要重建 | `Install-macOS26-Fix.command` |
 
-**字型補丁的實測環境**為 Intel macOS 15.7.7 與 M2 macOS 26.5（Rosetta）。兩者均觀察到相同的 ATS 崩潰堆疊。崩潰最早出現的版本及補丁可運作的最低版本都仍未知。
-
-字型快取修補則取決於快取所在的檔案系統。APFS 從 **macOS 10.13（High Sierra）** 起成為預設，因此快取問題理論上可早至 10.13 的 APFS 環境。兩項修補的原理見 [技術說明](docs/macos26-font-fix.md)。
+字型崩潰與快取修補的原理及實測紀錄見 [技術說明](docs/macos26-font-fix.md)。
 
 ## 第一步：在 Mojave 虛擬機裡安裝
 
@@ -59,9 +57,10 @@ Mojave 虛擬機需要 Intel Mac 當主機。Apple Silicon 無法用硬體虛擬
 
 原檔備份在本資料夾的 `backups/`（不會被提交到 git）。
 
-## 已知限制
+## 實測紀錄與已知限制
 
-- 相容性實測環境包括 Intel Sequoia 15.4.1 與 Apple Silicon（M2）macOS 26.5。Intel Sequoia 15.7.7 已確認會觸發同一處 ATS 字型崩潰，因此安裝步驟也包含字型補丁。列印、影片、Bridge 整合未完整測試。
+- Intel Sequoia 15.4.1 已驗證啟動。Intel Sequoia 15.7.7 出現 ATS 字型崩潰，套用補丁後已確認 Photoshop 載入補丁，字型迭代重設也通過獨立測試。
+- M2 macOS 26.5（Rosetta）出現同一處 ATS 崩潰。該環境已測試開檔、裁切、存 JPG 與文字工具。列印、影片與 Bridge 整合未完整測試。
 - 3D 功能已被停用。
 - 重裝或覆蓋 CS6 會把 `Disable-AutoUpdate.command` 停用的更新器與遙測元件裝回來，需再執行一次。
 - 本倉庫不處理授權或啟用問題。
